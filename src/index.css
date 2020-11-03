@@ -1,0 +1,8 @@
+
+body{
+    background: pink;
+}
+.logo{
+    height: 300px;
+    background: url("./imgs/logo.jpg") no-repeat;
+}
