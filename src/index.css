@@ -3,6 +3,7 @@ body{
     background: pink;
 }
 .logo{
+    display: flex;
     height: 300px;
     background: url("./imgs/logo.jpg") no-repeat;
 }

@@ -28,12 +28,12 @@ module.exports = {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
+                            publicPath:"../",//MiniCssExtractPlugin打包后css url路径会失效因为有创建了css目录
                             // only enable hot in development
                             hmr: process.env.NODE_ENV == 'development',
                             // if hmr does not work, this is a forceful method.
                             reloadAll: true
                         }
-
                     },
                     // {
                     //     loader: "style-loader",
@@ -43,7 +43,13 @@ module.exports = {
                     //         //"singletonStyleTag"使得所有的css文件使用同一个注入的标签
                     //     }
                     // },
-                    "css-loader"
+                    {
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 2//查询参数 importLoaders，用于配置「css-loader 作用于 @import 的资源之前」有多少个 loader。
+                        }
+                    },
+                    'postcss-loader',
                 ]
             },
             {
@@ -52,6 +58,7 @@ module.exports = {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
+                            publicPath:"../",//MiniCssExtractPlugin打包后css url路径会失效因为有创建了css目录
                             // only enable hot in development
                             hmr: process.env.NODE_ENV == 'development',
                             // if hmr does not work, this is a forceful method.
@@ -65,7 +72,13 @@ module.exports = {
                     //         injectType: "singletonStyleTag" //所有的css文件使用同一个注入的标签
                     //     }
                     // },
-                    "css-loader",
+                    {
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 2//查询参数 importLoaders，用于配置「css-loader 作用于 @import 的资源之前」有多少个 loader。
+                        }
+                    },
+                    'postcss-loader',
                     "less-loader"
                 ]
             },
@@ -76,8 +89,8 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 10000,//低于指定的限制时，可以返回一个 base64,减少图片请求链接。单位B
-                            name: "[name]-[hash].[ext]",//为你的文件配置自定义文件名模板
-                            outputPath: "imgs/"//为你的文件配置自定义 output 输出目录
+                            name: "[name].[ext]",//为你的文件配置自定义文件名模板
+                            outputPath: "images/"//为你的文件配置自定义 output 输出目录
                         }
                     }
                 ]
@@ -87,7 +100,7 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: process.env.NODE_ENV === 'development' ? 'css/[name].css' : 'css/[name].[contenthash].css',// 直接引用【entry中配置】
-            chunkFilename: process.env.NODE_ENV === 'development' ? 'css/[name].css' : 'css/[name].[contenthash].css'// 间接引用【其他地方引入使用的名字】
+            chunkFilename: process.env.NODE_ENV === 'development' ? 'css/[name].css' : 'css/[name].[contenthash].css',// 间接引用【其他地方引入使用的名字】
         }),
         new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
@@ -96,7 +109,7 @@ module.exports = {
             new BundleAnalyzerPlugin({
                 analyzerHost: '127.0.0.1',
                 analyzerPort: 8889,
-                openAnalyzer: true,
+                openAnalyzer: false,
             }),//打包分析
     ],
     optimization: {
@@ -128,4 +141,5 @@ module.exports = {
             }
         }
     }
+
 }

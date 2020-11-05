@@ -30,4 +30,8 @@ button.addEventListener("click",()=>{
     import(/*webpackChunkName:"asyncTwo",webpackPrefetch:true*/"./async-two").then(res=>{
         console.log(res)
     })
+    // import(/*webpackChunkName:"test",webpackPrefetch:true*/"./test").then(res=>{
+    //     console.log(res)
+    // })
 });
+

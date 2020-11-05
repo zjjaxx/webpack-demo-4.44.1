@@ -1,4 +1,4 @@
 import echarts from "echarts"
 import moduleA from "./moduleA"
-console.log("moduleA's name is",moduleA.name,echarts)
+console.log("async two moduleA's name is changed",moduleA.name,echarts)
 export const aysncTwo="aysncTwo"
