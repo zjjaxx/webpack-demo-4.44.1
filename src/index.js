@@ -1,21 +1,28 @@
 // css test
-import "./index.css"
+import {logo} from "./index.css"
+console.log("logo",logo)
+document.getElementById("logo").classList.add(logo)
 //less test
-import "./index.less"
+import index from "./index.less"
 //img test
 import imgPath from  "./imgs/logo.jpg"
 console.log("imgPath",imgPath)
+//tree shaking test
+import {action1,action2} from "./util"
+action1()
 //es test
 const _promise=new Promise((resolve,reject)=>{
     resolve(10)
 }).then(res=>{
     console.log("result is ",res)
 })
+import $ from "jquery"
+console.log("$",$)
 //同步代码
 // import moduleA from "./moduleA.js"
 // console.log("module A name is ",moduleA.name)
-import "./lib_modules/test-module"
-import "./lib_modules/test-module2"
+import "@lib_modules/test-module"
+import "@lib_modules/test-module2"
 import echarts from "echarts"
 console.log("echarts",echarts)
 //异步代码分割

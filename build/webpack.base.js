@@ -9,6 +9,7 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
+                include: path.resolve(__dirname, "../src"),
                 exclude: /node_modules/,//node_modules依赖文件夹不编译，提高编译速度
                 use: {
                     loader: 'babel-loader',
@@ -24,29 +25,45 @@ module.exports = {
             },
             {
                 test: /\.css$/,
+                include: path.resolve(__dirname, "../src"),
                 use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            publicPath:"../",//MiniCssExtractPlugin打包后css url路径会失效因为有创建了css目录
-                            // only enable hot in development
-                            hmr: process.env.NODE_ENV == 'development',
-                            // if hmr does not work, this is a forceful method.
-                            reloadAll: true
-                        }
-                    },
-                    // {
-                    //     loader: "style-loader",
-                    //     options: {
-                    //         injectType: "singletonStyleTag" 
-                    //         //默认情况下，每个css文件都会生成一个style标签，
-                    //         //"singletonStyleTag"使得所有的css文件使用同一个注入的标签
-                    //     }
-                    // },
+                    process.env.NODE_ENV == 'development' ?
+                        {
+                            loader: "style-loader",
+                            options: {
+                                esModule: true,
+                                modules: {
+                                  namedExport: true,
+                                },
+                                injectType: "singletonStyleTag"
+                                //默认情况下，每个css文件都会生成一个style标签，
+                                //"singletonStyleTag"使得所有的css文件使用同一个注入的标签
+                            }
+                        } :
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            options: {
+                                publicPath: "../",//MiniCssExtractPlugin打包后css url路径会失效因为有创建了css目录
+                                // only enable hot in development
+                                hmr: process.env.NODE_ENV == 'development',
+                                // if hmr does not work, this is a forceful method.
+                                reloadAll: true,
+                                esModule: true,
+                                modules: {
+                                    namedExport: true,
+                                },
+                            }
+                        },
+
                     {
                         loader: "css-loader",
                         options: {
-                            importLoaders: 2//查询参数 importLoaders，用于配置「css-loader 作用于 @import 的资源之前」有多少个 loader。
+                            esModule: true,
+                            modules: {
+                                namedExport: true,
+                                localIdentName: '[name]-[local]-purify-[contenthash]',
+                            },
+                            importLoaders: 1//查询参数 importLoaders，用于配置「css-loader 作用于 @import 的资源之前」有多少个 loader。
                         }
                     },
                     'postcss-loader',
@@ -54,27 +71,44 @@ module.exports = {
             },
             {
                 test: /\.less$/,
+                include: path.resolve(__dirname, "../src"),
                 use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            publicPath:"../",//MiniCssExtractPlugin打包后css url路径会失效因为有创建了css目录
-                            // only enable hot in development
-                            hmr: process.env.NODE_ENV == 'development',
-                            // if hmr does not work, this is a forceful method.
-                            reloadAll: true
-                        }
+                    process.env.NODE_ENV == 'development' ?
+                        {
+                            loader: "style-loader",
+                            options: {
+                                esModule: true,
+                                modules: {
+                                  namedExport: true,
+                                },
+                                injectType: "singletonStyleTag"
+                                //默认情况下，每个css文件都会生成一个style标签，
+                                //"singletonStyleTag"使得所有的css文件使用同一个注入的标签
+                            }
+                        } :
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            options: {
+                                publicPath: "../",//MiniCssExtractPlugin打包后css url路径会失效因为有创建了css目录
+                                // only enable hot in development
+                                hmr: process.env.NODE_ENV == 'development',
+                                // if hmr does not work, this is a forceful method.
+                                reloadAll: true,
+                                esModule: true,
+                                modules: {
+                                    namedExport: true,
+                                },
+                            }
 
-                    },
-                    // {
-                    //     loader: "style-loader",
-                    //     options: {
-                    //         injectType: "singletonStyleTag" //所有的css文件使用同一个注入的标签
-                    //     }
-                    // },
+                        },
                     {
                         loader: "css-loader",
                         options: {
+                            esModule: true,
+                            modules: {
+                                namedExport: true,
+                                localIdentName: '[name]-[local]-purify-[contenthash]',
+                            },
                             importLoaders: 2//查询参数 importLoaders，用于配置「css-loader 作用于 @import 的资源之前」有多少个 loader。
                         }
                     },
@@ -84,6 +118,7 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
+                include: path.resolve(__dirname, "../src/imgs"),
                 use: [
                     {
                         loader: 'url-loader',
@@ -98,21 +133,27 @@ module.exports = {
         ]
     },
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: process.env.NODE_ENV === 'development' ? 'css/[name].css' : 'css/[name].[contenthash].css',// 直接引用【entry中配置】
-            chunkFilename: process.env.NODE_ENV === 'development' ? 'css/[name].css' : 'css/[name].[contenthash].css',// 间接引用【其他地方引入使用的名字】
-        }),
         new CleanWebpackPlugin(),
-            new HtmlWebpackPlugin({
-                template: path.resolve(__dirname, "../public/index.html")
-            }),
-            new BundleAnalyzerPlugin({
-                analyzerHost: '127.0.0.1',
-                analyzerPort: 8889,
-                openAnalyzer: false,
-            }),//打包分析
+        new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, "../public/index.html"),
+            minify: process.env.NODE_ENV === 'development' ? false : {
+                minifyCSS: true,
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true
+            }
+        }),
+        new BundleAnalyzerPlugin({
+            analyzerHost: '127.0.0.1',
+            analyzerPort: 8889,
+            openAnalyzer: false,
+        }),//打包分析
     ],
     optimization: {
+        usedExports:true,
         splitChunks: {
             chunks: "all",//async 只支持对异步代码进行优化，all表示对同步和异步代码同时进行优化，initial表示只对同步代码块进行优化
             minSize: 20000,//分割的最小大小
@@ -140,6 +181,16 @@ module.exports = {
                 }
             }
         }
+    },
+    resolve: {
+        alias: {
+            "@lib_modules": path.resolve(__dirname, "../src/lib_modules")
+        },
+        modules: [path.resolve(__dirname, "../node_modules")],
+        extensions: ['.js', ".vue"]
+    },
+    externals: {
+        jquery: 'jQuery'
     }
 
 }
